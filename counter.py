@@ -2,7 +2,8 @@
 
 from os.path import exists
 import sys
-from pickle import dump, load
+import pickle
+import doctest
 
 
 def update_counter(file_name, reset=False):
@@ -30,11 +31,30 @@ def update_counter(file_name, reset=False):
     >>> update_counter('blah2.txt')
     2
     """
-    pass
+    if exists(file_name) is False or reset == True:
+        # print('%s is created now' % file_name)
+        f = open(file_name, 'wb')
+        number = 1
+        counter = '%d' % number
+        pickle.dump(counter, f)
+        return int(counter)
+        f.close()
+
+    else:
+        # print('%s exists' % file_name)
+        f = open(file_name, 'rb+')
+        number = pickle.load(f)
+        f.seek(0, 0)
+        new = int(number) + 1
+        counter = '%d' % new
+        pickle.dump(counter, f)
+        return int(counter)
+        f.close()
+
 
 if __name__ == '__main__':
+
     if len(sys.argv) < 2:
-        import doctest
-        doctest.testmod()
+        doctest.testmod(verbose=True)
     else:
-        print("new value is " + str(update_counter(sys.argv[1])))
+        print("New value is " + str(update_counter(sys.argv[1])))
